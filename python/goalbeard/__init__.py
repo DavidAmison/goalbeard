@@ -12,6 +12,7 @@ from .utils import create_personal_listener_from_msg
 from natural_time import natural_time
 import string
 import random
+import time as tm
 
 
 class GoalBeard(BeardChatHandler):
@@ -201,17 +202,17 @@ class GoalBeard(BeardChatHandler):
         # Update the database entry
         with self.reminders_table as table:
             matches = table.find(time=time)
-            print(matches)
             items = [match for match in matches]
             item = items[0]
             table.delete(time=time)
             # Increment the time by a day
-            time = time + 86400
-            item['time'] = time
+            new_time = time + 86400
+            item['time'] = new_time
             table.insert(item)
         # Add new event to the scheduler
-        self.scheduler.event_at(time, ('_show_goals',
-                                       {'id':u_id, 'time':time}))
+        tm.sleep(0.5)
+        self.scheduler.event_at(new_time, ('_show_goals',
+                                       {'id':u_id, 'time':new_time}))
 
     def _reload_reminders(self):
         with self.reminders_table as table:
