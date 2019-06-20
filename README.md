@@ -1,2 +1,2 @@
-# dicebeard
-A dice module for skybeard (telepot)
+# goalbeard
+A module for skybeard (telepot) used to set goals
