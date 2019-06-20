@@ -180,9 +180,12 @@ class GoalBeard(BeardChatHandler):
         reply = await my_listener.wait()
         time = natural_time(reply['text']).timestamp()
         # Create the event and append it to reminders (easier to cancel)
-        self.reminders.append(
-                self.scheduler.event_at(time, ('_show_goals',
-                                               {'id':u_id, 'time':time})))
+        reminder = self.scheduler.event_at(time, ('_show_goals',
+                                                  {'id':u_id, 'time':time}))
+        self.reminders.append(reminder)
+        print(reminder)
+        print(self.bot.scheduler._eventq)
+        print(self.
         # Add it to the table
         with self.reminders_table as table:
             r_id = "".join(
@@ -195,6 +198,7 @@ class GoalBeard(BeardChatHandler):
         await self.sender.sendMessage("Reminder set for {}".format(time))
 
     async def on_show_goals(self, data):
+        print("Activating reminder")
         u_id = data['_show_goals']['id']
         await self.show_goals({'from':{'id':u_id}})
         # Create new event so it is a perpetual reminder
@@ -211,8 +215,8 @@ class GoalBeard(BeardChatHandler):
             table.insert(item)
         # Add new event to the scheduler
         tm.sleep(0.5)
-        self.scheduler.event_at(new_time, ('_show_goals',
-                                       {'id':u_id, 'time':new_time}))
+        # self.scheduler.event_at(new_time, ('_show_goals',
+        #                               {'id':u_id, 'time':new_time}))
 
     def _reload_reminders(self):
         with self.reminders_table as table:
